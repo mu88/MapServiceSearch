@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <Configuration>Release</Configuration>
+        <ClientProject>..\MapServiceSearch.Web.App\MapServiceSearch.Web.App.csproj</ClientProject>
+        <ServerPublishDir>\\mapservicesearch\htdocs\api</ServerPublishDir>
+    </PropertyGroup>
+    
+    <ItemGroup>  
+        <BackendConfig Include="..\api\**\*.*" />
+        <ServerPublishDirContent Include="$(ServerPublishDir)\**\*.*" />
+    </ItemGroup>
+    
+    <Target Name="DeployServer">
+        <Delete Files="@(ServerPublishDirContent)" ContinueOnError="true"/>
+        <Copy  
+            SourceFiles="@(BackendConfig)"
+            DestinationFolder="$(ServerPublishDir)"
+            OverwriteReadOnlyFiles="true"
+        />
+    </Target>
+        
+    <Target Name="DeployClient">
+        <MSBuild 
+            Projects="$(ClientProject)" 
+            Properties="
+                Configuration=$(Configuration);
+                DeployOnBuild=true;
+                PublishProfile=Production" />
+    </Target>
+</Project>
